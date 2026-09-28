@@ -16,15 +16,20 @@ Read its README and the infrastructure agent guide:
 https://github.com/joshcirre/convex-on-laravel-cloud/blob/main/docs/agents/README.md
 
 Guide me through Cloud signup and authorization if needed. Use the Cloud CLI
-where supported and explain the documented browser handoffs. Use a separate
-Convex backend with private MySQL and a bucket, optionally its dashboard, then
-this frontend. Ask for missing organization, region, names, and budget together.
+where supported and explain the documented browser handoffs. Use the low-cost demo profile: separate 1 GB Convex backend, smallest private
+MySQL and a bucket, and this frontend on 512 MB. Enable five-minute scale-to-zero
+where supported and explain its limitations. Keep the dashboard local unless
+I ask to host it. Discover current cheaper size IDs and reuse existing CLI/GitHub
+access. Ask for missing organization, region, and names together; a numerical
+budget is optional when I have already asked for the cheapest demo.
 Do not use Lawn's resources. Deploy the functions before the frontend. Keep the
 admin key local and out of the frontend environment. Verify updates across two
 browser windows and persistence after a backend redeploy.
 ```
 
 The [infrastructure agent guide](https://github.com/joshcirre/convex-on-laravel-cloud/blob/main/docs/agents/README.md) covers installing the Cloud CLI, creating an account, connecting GitHub, provisioning resources, and the remaining browser steps.
+
+For costs and size IDs, see the [low-cost deployment guide](https://github.com/joshcirre/convex-on-laravel-cloud/blob/main/docs/costs.md). Running this frontend locally avoids an extra Cloud compute charge.
 
 ## 1. Deploy the backend first
 
@@ -124,4 +129,4 @@ Changes: explicit self-hosted Convex scripts and environment examples, backend-c
 
 **Local checks (2026-09-28):** Node 22.23.3 clean `npm ci`, typecheck, lint, and production build passed. The production server served static assets over IPv6 and a missing route over IPv4. `npm audit` reported zero known vulnerabilities at that time. The build emits dependency `use client` directive warnings from Nitro/Rolldown.
 
-Cloud deployment and live persistence checks for this standalone demo remain to be performed against its own backend. Local validation does not imply it has been deployed to Laravel Cloud.
+**Live checks (2026-09-28):** This standalone demo was deployed on a 512 MB Cloud instance against its own 1 GB self-hosted backend, with private MySQL/object storage and a separate dashboard. Hosted two-tab realtime updates and the action page passed. Data and functions survived a backend redeploy. Five-minute hibernation is configured, but actual sleep/wake timing, load limits, uploaded-file persistence, and backup recovery remain untested.
