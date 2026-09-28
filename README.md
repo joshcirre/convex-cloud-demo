@@ -2,6 +2,8 @@
 
 A small TanStack Start app for trying [self-hosted Convex on Laravel Cloud](https://github.com/joshcirre/convex-on-laravel-cloud). Add a number in one browser window and watch it appear in another. A second page demonstrates a Convex action.
 
+**[Try the live demo](https://convex-demo.laravel.cloud)** — open it in two browser windows, add a number, and watch both update in real time. The shared demo may take a moment to wake after inactivity.
+
 This is a standalone adaptation of [Convex's official TanStack Start template](https://github.com/get-convex/templates/tree/800bd6c8d23e2b03bade4058f0879e9f59dbcb11/template-tanstack-start). It has its own backend functions and no dependency on Lawn or a Laravel auth API. The upstream Apache-2.0 [license](LICENSE) is preserved.
 
 **This is an anonymous, shared demo.** Anyone who can reach the backend can read and add numbers. Use a dedicated demo backend and non-sensitive data; add authentication, authorization, and abuse controls before using it as a real application.
