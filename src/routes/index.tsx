@@ -18,13 +18,13 @@ function Home() {
   return (
     <main className="p-8 flex flex-col gap-16">
       <h1 className="text-4xl font-bold text-center">
-        Convex + Tanstack Start
+        Convex on Laravel Cloud
       </h1>
       <div className="flex flex-col gap-8 max-w-lg mx-auto">
         <p>Welcome {viewer ?? 'Anonymous'}!</p>
         <p>
           Click the button below and open this page in another window - this
-          data is persisted in the Convex cloud database!
+          data is saved by your self-hosted Convex backend on Laravel Cloud.
         </p>
         <p>
           <button
@@ -77,7 +77,7 @@ function Home() {
                 title="Stack articles"
                 description="Learn about best practices, use cases, and more from a growing
             collection of articles, videos, and walkthroughs."
-                href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
+                href="https://stack.convex.dev"
               />
             </div>
             <div className="flex flex-col gap-2 w-1/2">
