@@ -111,6 +111,21 @@ cloud deploy:monitor FRONTEND_APP_ID production -n
 
 Push functions from your local checkout before deploying the frontend. The frontend's build does not push functions and does not require admin credentials. Do not set `CONVEX_SELF_HOSTED_ADMIN_KEY`, `INSTANCE_SECRET`, or any `VITE_*` admin key on the frontend.
 
+## Let the backend sleep
+
+An open Convex tab holds a WebSocket to the backend, and Cloud counts that connection as traffic. One forgotten tab, including a background tab, can keep a scale-to-zero backend awake for hours. Convex's own work (table-summary checkpoints and its outbound usage beacon) does not keep it awake. On the live demo, every long awake period from September 28–30, 2026 lined up with a browser tab holding a sync socket.
+
+[`src/idleDisconnect.ts`](src/idleDisconnect.ts) closes the socket when nobody is using the page, and reopens it on the next pointer, keyboard, scroll, focus, or tab-visible event:
+
+| Page state | Socket closes after | Override (seconds, set before building) |
+| --- | --- | --- |
+| Visible, no interaction | 5 minutes | `VITE_CONVEX_IDLE_SECONDS` |
+| Hidden tab | 1 minute | `VITE_CONVEX_HIDDEN_SECONDS` |
+
+On reconnect, Convex resubscribes to every active query and sends any queued mutations, so the page catches up without a reload. If the backend fell asleep in the meantime, the first request pays one cold start. An idle window stops receiving other people's updates until the user interacts with it again. With five-minute Cloud hibernation, an abandoned tab keeps the backend awake for at most about 10 minutes (6 if it is hidden).
+
+Convex 1.41 has no public pause API, so this helper calls the same stop/restart socket methods that Convex's auth refresh uses. If a Convex upgrade removes them, the helper logs a warning and leaves the socket open; recheck it when you change the pinned `convex` version. Copy the file and the one-line `disconnectWhenIdle(...)` call in [`src/router.tsx`](src/router.tsx) into your own app to get the same behavior. For an always-on backend, remove that call.
+
 ## Verification
 
 ```sh
@@ -127,7 +142,7 @@ If the page reports a missing function, run `npm run convex:deploy` against the 
 
 Imported `template-tanstack-start` from `get-convex/templates` at commit `800bd6c8d23e2b03bade4058f0879e9f59dbcb11`. This is an extracted template, not a GitHub fork of the entire templates monorepo.
 
-Changes: explicit self-hosted Convex scripts and environment examples, backend-compatible Convex version, Node/Nitro production hosting, Cloud documentation, and demo copy. The initial import remains a separate commit for comparison. Upstream agent guidelines may describe newer Convex features; check the pinned SDK before using them.
+Changes: explicit self-hosted Convex scripts and environment examples, backend-compatible Convex version, Node/Nitro production hosting, idle WebSocket disconnect for scale-to-zero, Cloud documentation, and demo copy. The initial import remains a separate commit for comparison. Upstream agent guidelines may describe newer Convex features; check the pinned SDK before using them.
 
 **Local checks (2026-09-28):** Node 22.23.3 clean `npm ci`, typecheck, lint, and production build passed. The production server served static assets over IPv6 and a missing route over IPv4. `npm audit` reported zero known vulnerabilities at that time. The build emits dependency `use client` directive warnings from Nitro/Rolldown.
 

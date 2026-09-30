@@ -4,11 +4,14 @@ import { routerWithQueryClient } from '@tanstack/react-router-with-query'
 import { ConvexQueryClient } from '@convex-dev/react-query'
 import { ConvexProvider } from 'convex/react'
 import { routeTree } from './routeTree.gen'
+import { disconnectWhenIdle } from './idleDisconnect'
 
 export function getRouter() {
   const CONVEX_URL = import.meta.env.VITE_CONVEX_URL
   if (!CONVEX_URL) {
-    throw new Error('Set VITE_CONVEX_URL to your self-hosted backend URL before building.')
+    throw new Error(
+      'Set VITE_CONVEX_URL to your self-hosted backend URL before building.',
+    )
   }
   const convexQueryClient = new ConvexQueryClient(CONVEX_URL)
 
@@ -22,6 +25,7 @@ export function getRouter() {
     },
   })
   convexQueryClient.connect(queryClient)
+  disconnectWhenIdle(convexQueryClient.convexClient)
 
   const router = routerWithQueryClient(
     createRouter({
